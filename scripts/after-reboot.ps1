@@ -11,7 +11,8 @@ $uninstallSuccess = $false
 while(!$uninstallSuccess) {
   Write-Host "Attempting to uninstall features..."
   try {
-    Get-WindowsFeature | ? { $_.InstallState -eq 'Available' } | Uninstall-WindowsFeature -Remove -ErrorAction Stop
+    #Get-WindowsFeature | ? { $_.InstallState -eq 'Available' } | Uninstall-WindowsFeature -Remove -ErrorAction Stop
+    Get-WindowsOptionalFeature –Online | Where-Object { $_.State –eq “Enabled” } | Disable-WindowsOptionalFeature -Online -Remove -ErrorAction Stop -NoRestart
     Write-Host "Uninstall succeeded!"
     $uninstallSuccess = $true
   }
