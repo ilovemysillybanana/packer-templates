@@ -12,14 +12,34 @@ while(!$uninstallSuccess) {
   Write-Host "Attempting to uninstall features..."
   try {
 
-    if (Get-Command Get-WindowsFeature -ErrorAction SilentlyContinue) {
-      Write-Host "Server Detected - Removing Features."
-      Get-WindowsFeature | ? { $_.InstallState -eq 'Available' } | Uninstall-WindowsFeature -Remove -ErrorAction Stop
-    } elseif (Get-Command Get-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
-      Write-Host "NonServer Detected - Removing Optional Features"
-      Get-WindowsOptionalFeature –Online | Where-Object { $_.State –eq “Enabled” } | Disable-WindowsOptionalFeature -Online -Remove -ErrorAction Stop -NoRestart
-    } else {
-      Write-Host "Unknown Windows Version Detected."
+    if (Get-Command Get-WindowsFeature -ErrorAction SilentlyContinue){
+      Write-Host "Windows Server Detected...Removing Features..."
+      $features = Get-WindowsFeature
+      forEach ($feat in $features) {
+        #skip the entry if it's .NET or PowerShell
+        if ($feat.FeatureName.Contains("NetFx") -or $feat.FeatureName.Contains("PowerShellV2")){
+          Write-Host "Skipping: $($feat.FeatureName)"
+          continue
+        } else {
+          Write-Host "Disabling Feature: $($feat.FeatureName)"
+          Uninstall-WindowsFeature -Name $feat.FeatureName -Remove -ErrorAction Stop
+        }
+      }
+    }elseif (Get-Command Get-WindowsOptionalFeature -ErrorAction SilentlyContinue) {
+      Write-Host "Windows NonServer Detected...Removing Optional Features..."
+      $features = Get-WindowsOptionalFeature -Online
+      forEach ($feat in $features) {
+        #skip the entry if it's .NET or PowerShell
+        if ($feat.FeatureName.Contains("NetFx") -or $feat.FeatureName.Contains("PowerShellV2")){
+          Write-Host "Skipping: $($feat.FeatureName)"
+          continue
+        } else {
+          Write-Host "Disabling Feature: $($feat.FeatureName)"
+          Disable-WindowsOptionalFeature -FeatureName $feat.FeatureName -Online -NoRestart -Remove -ErrorAction Stop
+        }
+      }
+    }else {
+      Write-Host "Unable to determine the version of Windows running on this device."
     }
 
     Write-Host "Uninstall succeeded!"

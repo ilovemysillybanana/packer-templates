@@ -70,13 +70,32 @@
       "run_list": [
         "packer-templates::enable_file_sharing",
         "packer-templates::remote_desktop",
-        "packer-templates::clean_sxs",
         "packer-templates::add_postunattend",
         "packer-templates::add_pagefile",
         "packer-templates::set_local_account_token_filter_policy",
         "packer-templates::remove_dirs",
         "packer-templates::add_setup_complete"
       ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "15m"
+    },
+    {
+      "type": "chef-solo",
+      "remote_cookbook_paths": [
+        "c:/windows/temp/packer-chef-solo/cookbooks-0",
+        "c:/windows/temp/packer-chef-solo/cookbooks-1"
+      ],
+      "guest_os_type": "windows",
+      "skip_install": "true",
+      "run_list": [
+        "packer-templates::clean_sxs"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "15m"
     },
     {
       "type": "powershell",
