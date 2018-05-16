@@ -50,6 +50,10 @@
       "elevated_password": "vagrant"
     },
     {
+      "type": "windows-restart",
+      "restart_timeout": "15m"
+    },
+    {
       "type": "chef-solo",
       "remote_cookbook_paths": [
         "c:/windows/temp/packer-chef-solo/cookbooks-0",
