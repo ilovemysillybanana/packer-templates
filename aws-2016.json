@@ -1,0 +1,18 @@
+"builders": [{
+  "type": "amazon-ebs",
+  "region": "eu-west-1",
+  "instance_type": "t2.micro",
+  "ami_name": "Bamboo Server 6.1 {{timestamp}}",
+  "user_data_file": "./scripts/aws-setup-winrm.ps1",
+  "communicator": "winrm",
+  "winrm_username": "Administrator",
+  "winrm_use_ssl": true,
+  "winrm_insecure": true,
+  "source_ami_filter": {
+    "filters": {
+      "name": "Windows_Server-2012-R2_RTM-English-64Bit-Base-*"
+    },
+    "owners": ["801119661308"],
+    "most_recent": true
+  }
+}]
